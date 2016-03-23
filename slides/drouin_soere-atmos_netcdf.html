@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+        <meta name="author" content="M.-A. Drouin" />
+            <title>netCDF et python</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="reveal.js/css/reveal.css"/>
+    <style type="text/css">code{white-space: pre;}</style>
+            <link rel="stylesheet" href="reveal.js/css/theme/solarized.css" id="theme">
+        <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = 'reveal.js/css/print/pdf.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+    </script>
+    <!--[if lt IE 9]>
+    <script src="reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+          </head>
+  <body>
+        <div class="reveal">
+      <div class="slides">
+                <section>
+          <h1 class="title">netCDF et python</h1>
+                              <h2 class="author">M.-A. Drouin</h2>
+                    <h3 class="date">SOERE ATMOS 29 au 31 mars 2016, OHP</h3>
+        </section>
+                        <section><section id="netcdf" class="titleslide slide level1"><h1><a href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a></h1></section><section class="slide level6">
+
+<ul>
+<li>Network Common Data Form</li>
+<li>projet débuté en 1989</li>
+<li>développé par <a href="https://www.unidata.ucar.edu/">unidata</a></li>
+<li>extension <strong>.nc</strong></li>
+<li>2 version du format cohabitent
+<ul>
+<li>netCDF3
+<ul>
+<li>disponible depuis 1997</li>
+</ul></li>
+<li>netCDF4
+<ul>
+<li>disponible depuis 2008</li>
+<li>Compatible avec les fichier netCDF3</li>
+</ul></li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="pourquoi-utiliser-netcdf" class="titleslide slide level1"><h1>Pourquoi utiliser netCDF ?</h1></section><section class="slide level6">
+
+<ul>
+<li><strong>self-describing</strong>
+<ul>
+<li>les données sont documentées</li>
+</ul></li>
+<li><strong>portable</strong>
+<ul>
+<li>indépendant de l'architecture machine</li>
+</ul></li>
+<li><strong>scalable</strong>
+<ul>
+<li>un jeu de données est divisable en plusieurs fichiers</li>
+</ul></li>
+<li><strong>appendable</strong>
+<ul>
+<li>on peut compléter les fichiers</li>
+</ul></li>
+<li><strong>sharable</strong>
+<ul>
+<li>accès simultanés en lecture</li>
+</ul></li>
+<li><strong>archivable</strong>
+<ul>
+<li>la rétrocompatibilité est garantie</li>
+</ul></li>
+</ul>
+</section><section class="slide level6">
+
+<ul>
+<li>nombreuses bibliothèques disponibles pour le developpement
+<ul>
+<li>C, fortran, python, matlab, IDL, ...</li>
+</ul></li>
+<li>nombreux logiciels compatibles
+<ul>
+<li><a href="http://nco.sourceforge.net/">NCO</a> (netCDF operators)</li>
+<li><a href="http://meteora.ucsd.edu/~pierce/ncview_home_page.html">ncview</a></li>
+<li><a href="http://www.giss.nasa.gov/tools/panoply/">panoply</a></li>
+<li><a href="https://www.unidata.ucar.edu/software/netcdf/workshops/2011/utilities/Ncdump.html">ncdump</a></li>
+<li>...</li>
+</ul></li>
+</ul>
+</section><section class="slide level6">
+
+<ul>
+<li>serveur/distribution
+<ul>
+<li><a href="https://www.unidata.ucar.edu/software/thredds/current/tds/">thredds</a></li>
+<li><a href="http://www.opendap.org/">opendap</a></li>
+</ul></li>
+</ul>
+</section><section class="slide level6">
+
+<ul>
+<li>utilisé par d'autres standards
+<ul>
+<li>NASA Earth Science Data Systems (ESDS) Standards Process Group</li>
+<li>Integrated Ocean Observing System (IOOS) Data Management and Communications (DMAC) Subsystem</li>
+<li>Steering Committee of the Federal Geographic Data Committee (FGDC)</li>
+<li>Open Geospatial Consortium (OGC)</li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="contenu-dun-fichier-netcdf" class="titleslide slide level1"><h1>contenu d'un fichier netCDF</h1></section><section class="slide level6">
+
+<ul>
+<li><strong>dimensions</strong>
+<ul>
+<li>nombre d'élements d'un vecteur de données</li>
+<li>axes des données
+<ul>
+<li>dans notre cas le temps ou l'altitude</li>
+</ul></li>
+<li>une dimension peut-être <strong>illimité</strong>
+<ul>
+<li>on pourra ajouter des éléments le long de cette dimension</li>
+</ul></li>
+<li>exemples :
+<ul>
+<li>nombre de pas de temps</li>
+<li>nombre d'altitude de mesure</li>
+<li>nombre de capteurs</li>
+</ul></li>
+</ul></li>
+</ul>
+</section><section class="slide level6">
+
+<ul>
+<li><strong>variables</strong>
+<ul>
+<li>sa taille dépend d'une ou plusieurs dimensions</li>
+<li>a un type :
+<ul>
+<li>short, long, float, double</li>
+</ul></li>
+<li>une variable et une dimension peuvent avoir le même nom</li>
+<li>exemples :
+<ul>
+<li>température</li>
+<li>pression</li>
+<li>retrodiffusion</li>
+</ul></li>
+</ul></li>
+</ul>
+</section><section class="slide level6">
+
+<ul>
+<li><strong>attributs</strong>
+<ul>
+<li>informations complémentaires sur les variables</li>
+<li>les attributs peuvent être typés</li>
+<li>exemples :
+<ul>
+<li>unité</li>
+<li>nom long</li>
+<li>nom standard</li>
+<li>commentaires sur la méthode de production de la données</li>
+</ul></li>
+</ul></li>
+</ul>
+</section><section class="slide level6">
+
+<ul>
+<li><strong>attributs globaux</strong>
+<ul>
+<li>metadonnées valable pour l'ensemble du fichier</li>
+<li>principalement des chaînes de caractère</li>
+<li>exemples :
+<ul>
+<li>titre du fichier/jeu de données</li>
+<li>PI de l'instrument</li>
+<li>numéro de série de l'instruments</li>
+<li>commentaires</li>
+</ul></li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="netcdf3-vs-netcdf4" class="titleslide slide level1"><h1>NetCDF3 VS NetCDF4</h1></section><section class="slide level6">
+
+<ul>
+<li>compatibilité
+<ul>
+<li>un fichier NetCDF3 peut-être lu avec une bibliothèque NetCDF4</li>
+<li>l'inverse est faux</li>
+</ul></li>
+<li>fonctionnalités supllémentaires
+<ul>
+<li>plusieurs dimensions peuvent être illimités</li>
+<li>compression des données</li>
+<li>création de groupes de variables
+<ul>
+<li>ex : pour les modèles séparation entre analyses</li>
+</ul></li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="convention-cf" class="titleslide slide level1"><h1>convention CF</h1></section><section class="slide level6">
+
+<p>http://cfconventions.org/</p>
+<ul>
+<li>convention qui normalisent principalement les attributs qui doivent être présents dans un fichier
+<ul>
+<li>actuellement en version <a href="http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.pdf">1.6</a> (2011)</li>
+<li>défini une liste de <strong>standard_name</strong> pour les variables
+<ul>
+<li>liste assez exhaustive pour les modèles</li>
+<li>quasi inexistante pour les mesures sols</li>
+</ul></li>
+<li>défini une liste d'unités (basé sur <a href="https://www.unidata.ucar.edu/software/udunits/">udunits</a>)</li>
+</ul></li>
+</ul>
+</section><section class="slide level6">
+
+<ul>
+<li>utilité
+<ul>
+<li>le fichier va pouvoir être utilisé facilement avec les outils compatible avec la convention
+<ul>
+<li>prise en compte des latitudes et longitudes pour les sorties de modèles</li>
+<li>conversion d'unité des valeurs</li>
+</ul></li>
+</ul></li>
+<li>outils de vérification en ligne disponible
+<ul>
+<li><a href="http://puma.nerc.ac.uk/cgi-bin/cf-checker.pl?cfversion=auto">cf-checker</a></li>
+</ul></li>
+<li>depuis 2013 la convention CF est une norme officiel de l'OGC</li>
+</ul>
+</section><section class="slide level6">
+
+<ul>
+<li>le standard défini des bonnes pratiques de stockage des données
+<ul>
+<li>gestion des données manquantes</li>
+<li>gestions des flags et de leurs significations</li>
+<li>conseils pour certains types de données instrumentales</li>
+</ul></li>
+</ul>
+</section><section class="slide level6">
+
+<ul>
+<li><a href="http://cfconventions.org/cf-conventions/cf-conventions.pdf">CF-1.7</a>
+<ul>
+<li>encore à l'état de draft</li>
+<li>sujet instrumentation plus développé
+<ul>
+<li>ajout d'attibuts spécifiques</li>
+<li>travail sur les <strong>standard_name</strong></li>
+<li></li>
+</ul></li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="module-netcdf4-python" class="titleslide slide level1"><h1>module <a href="https://unidata.github.io/netcdf4-python/">netCDF4</a> python</h1></section><section class="slide level6">
+
+<ul>
+<li>module officiel supporté par UNIDATA</li>
+<li>developpements actifs</li>
+<li>compatible avec netCDF3 et netCDF4</li>
+<li>compatible python 2.6+, 3+</li>
+<li>basé sur les objets numpy</li>
+<li>nombreux exemples d'utilisation disponibles</li>
+<li>documentation
+<ul>
+<li>fournie sur le code</li>
+<li>manque d'exemples concrets</li>
+</ul></li>
+</ul>
+</section></section>
+      </div>
+    </div>
+    <script src="reveal.js/lib/js/head.min.js"></script>
+    <script src="reveal.js/js/reveal.js"></script>
+    <script>
+    // Full list of configuration options available here:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+    theme: 'solarized', // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+    { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+    { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+    { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+    //          { src: 'reveal.js/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; }, }
+    //          { src: 'reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]});
+    </script>
+      </body>
+</html>
