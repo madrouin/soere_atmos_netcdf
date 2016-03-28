@@ -150,6 +150,8 @@ http://cfconventions.org/
     + gestion des données manquantes
     + gestions des flags et de leurs significations
     + conseils pour certains types de données instrumentales
+- le standard défini comment représenter le temps
+    + particulièrement le format de l'unité
 
 ------------------
 
@@ -158,7 +160,7 @@ http://cfconventions.org/
     + sujet instrumentation plus développé
         * ajout d'attibuts spécifiques
         * travail sur les **standard_name**
-        * 
+
 
 # module [netCDF4](https://unidata.github.io/netcdf4-python/) python
 
